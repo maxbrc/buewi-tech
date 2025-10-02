@@ -1,0 +1,37 @@
+.message-list {
+    position: fixed;
+    top: 0;
+    right: 0;
+    max-width: 70%;
+    z-index: 9999999999999999999;
+    display: flex;
+    height: calc(100% - 2rem);
+    overflow-y: scroll;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin: 1rem;
+    pointer-events: none;
+    color: white;
+}
+
+.message-list div {
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+}
+
+.error {
+    background-color: #ef3e36;
+}
+
+.warning {
+    background-color: #ff8600;
+}
+
+.info {
+    background-color: #0496ff;
+}
+
+.success {
+    background-color: #72b01d;
+}

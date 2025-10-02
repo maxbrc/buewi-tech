@@ -1,0 +1,108 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 100% 1 1;
+}
+
+.login section.login-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 3;
+    flex-shrink: 3;
+    gap: 1rem;
+}
+
+.login-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+}
+
+.login-heading h1 {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    letter-spacing: 0.07rem;
+    text-align: center;
+    line-height: 1.5rem;
+    flex-grow: 0;
+}
+
+.login-heading span {
+    font-size: 1.2rem;
+    color: rgb(100, 100, 100);
+}
+
+.login-welcome > img {
+    display: block;
+    width: 30%;
+}
+
+.login section.login-credentials {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80dvw;
+}
+
+.login-credentials > div {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.5px solid rgb(177, 177, 177);
+    gap: 1rem;
+    box-shadow: 0 0.15rem 0.3rem 0.01rem rgba(177, 177, 177, 0.4);
+    max-width: 500px;
+    flex-grow: 1;
+}
+
+.login-credentials .credential label {
+    margin: 0 0 0.2rem 0;
+    font-size: 0.8rem;
+    color: rgb(60, 60, 60);
+    display: block;
+}
+
+.login-credentials .credential-input {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 2.1rem;
+    border: 0.5px solid rgb(177, 177, 177);
+    border-radius: 0.3rem;
+    padding: 0.5rem;
+}
+
+.login-credentials .credential-input input {
+    border: none;
+    background-color: inherit;
+    outline: none;
+    flex-grow: 1;
+    font-size: 0.8rem;
+}
+
+.login-credentials .credential-input img {
+    height: 100%;
+    margin: 0 0.5rem 0 0;
+}
+
+.spacer {
+    content: "";
+    flex-grow: 3;
+    flex-shrink: 3;
+}
+
+.login-credentials button {
+    background-color: #0368DA;
+    height: 2.1rem;
+    border-radius: 0.3rem;
+}

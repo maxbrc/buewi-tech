@@ -1,0 +1,19 @@
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+.loading {
+    flex: 100% 1 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.loading h1 {
+    border: 0;
+    flex-grow: 0;
+}

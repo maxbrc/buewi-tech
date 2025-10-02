@@ -1,0 +1,27 @@
+header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid rgb(177, 177, 177);
+    margin: 0 0 1rem 0;
+    background-color: white;
+}
+
+header a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+header img.home-icon {
+    height: 1.4rem;
+    margin: 0 0.75rem 0 0;
+}
+
+h1 {
+    flex-grow: 1;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0.25rem 0 0.25rem 0.75rem;
+    border-left: 2px solid #0368DA;
+}

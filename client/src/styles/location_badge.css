@@ -1,0 +1,13 @@
+.item-location {
+    height: 0.9rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #0368DA;
+}
+
+.item-location img {
+    height: 100%;
+    margin: 0 0.2rem 0 0;
+}

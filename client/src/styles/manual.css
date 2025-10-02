@@ -1,0 +1,48 @@
+.manuals div {
+    display: flex;
+    padding: 1em;
+    border: 0.5px solid rgb(177, 177, 177);
+    border-radius: 0.5em;
+    background-color: white;
+    align-items: center;
+}
+
+.manuals section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.manuals section.manual-info {
+    align-items: flex-start;
+    flex-grow: 1;
+}
+
+.manual-view {
+    height: 1.5rem;
+}
+
+.manual-view img {
+    height: 100%;
+    filter: brightness(0%);
+}
+
+.item-name {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 0 0 0.4rem;
+}
+
+.item-sn {
+    font-size: 0.8rem;
+    color: #868686;
+}
+
+.manual-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 90dvh;
+    width: 100dvw;
+    z-index: 99;
+}

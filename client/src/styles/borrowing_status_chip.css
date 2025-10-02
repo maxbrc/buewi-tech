@@ -1,0 +1,28 @@
+span.borrowing-status {
+    border-radius: 9999rem;
+    display: inline-block;
+    font-weight: 500;
+    align-self: flex-start;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+}
+
+span.borrowing-status.available {
+    background-color: #32d658ea;
+    color: white;
+}
+
+span.borrowing-status.borrowed {
+    background-color: #ff7b00;
+    color: #212529;
+}
+
+span.borrowing-status.overdue {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+span.borrowing-status.lost{
+    background-color: #e02b3d;
+    color: white;
+}

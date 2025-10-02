@@ -1,0 +1,27 @@
+.modules {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+.modules div {
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    border: 0.5px solid rgb(177, 177, 177);
+    background-color: white;
+    gap: 1rem;
+}
+
+.modules div h3 {
+    font-weight: 600;
+}
+
+.modules div img {
+    height: 100%;
+    padding: 0.5rem;
+    border-radius: 0.4rem;
+    background-color: rgb(242, 242, 242);
+}

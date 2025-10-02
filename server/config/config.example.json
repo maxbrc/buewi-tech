@@ -1,0 +1,5 @@
+{
+    "bind_address": "0.0.0.0:8080",
+    "mysql_connection_string": "user:password@/dbname",
+    "ed25519_seed_path": "/opt/bwtech/secrets/ed25519_seed.bin"
+}
