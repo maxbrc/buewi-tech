@@ -1,5 +1,5 @@
 node_modules
 **/dist
-*.json
+**/config/*.json
 !*.example.json
 secrets/

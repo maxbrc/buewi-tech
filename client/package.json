@@ -1,0 +1,45 @@
+{
+  "name": "buewi-tech",
+  "version": "0.0.0",
+  "description": "Management Seite für VTechnik des GymBw",
+  "homepage": "https://github.com/bm-dynamics/buewi-tech#readme",
+  "bugs": {
+    "url": "https://github.com/bm-dynamics/buewi-tech/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bm-dynamics/buewi-tech.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server/dist/index.js",
+  "scripts": {
+    "dev": "webpack --watch --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.9",
+    "@types/react-input-autosize": "^2.2.4",
+    "@types/react-dom": "^19.1.6",
+    "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "tsc-watch": "^7.1.1",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-merge": "^6.0.1"
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-input-autosize": "^3.0.0",
+    "react-router": "^7.6.2",
+    "uuid": "^11.1.0"
+  }
+}
