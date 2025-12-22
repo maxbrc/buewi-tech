@@ -20,6 +20,8 @@ import Speaker from "../assets/Speaker.svg";
 import SwapCalls from "../assets/SwapCalls.svg";
 import SwapHoriz from "../assets/SwapHoriz.svg";
 import TwoPagerStore from "../assets/TwoPagerStore.svg";
+import ToolsPowerDrill from "../assets/ToolsPowerDrill.svg";
+import SmartOutlet from "../assets/SmartOutlet.svg";
 
 export const Icons = {
   Archive,
@@ -44,4 +46,6 @@ export const Icons = {
   SwapCalls,
   SwapHoriz,
   TwoPagerStore,
+  ToolsPowerDrill,
+  SmartOutlet
 };
