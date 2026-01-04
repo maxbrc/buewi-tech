@@ -23,10 +23,6 @@ function Dashboard() {
                     <img src={GroupIcon} />
                     <h3>Ausleihportal</h3>
                 </div>
-                <div onClick={() => navigate("/calendar")}>
-                    <img src={CalendarIcon} />
-                    <h3>Kalender</h3>
-                </div>
                 <div onClick={() => navigate("/resources")}>
                     <img src={ManualIcon} />
                     <h3>Anleitungen</h3>
