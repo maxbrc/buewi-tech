@@ -8,7 +8,7 @@ import (
 	"github.com/bm-dynamics/buewi-tech/server/config"
 )
 
-func SetupRoutes() {
+func SetupRoutes() error {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/items", handlers.GetItems)
@@ -45,6 +45,5 @@ func SetupRoutes() {
 		http.ServeFile(w, r, filepath.Join(distDir, "index.html"))
 	})
 
-	err := http.ListenAndServe(config.AppConfig.BindAddress, mux)
-	panic(err)
+	return http.ListenAndServe(config.AppConfig.BindAddress, mux)
 }

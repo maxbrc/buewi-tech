@@ -24,5 +24,8 @@ func main() {
 	}
 
 	fmt.Println("Bind Address:", config.AppConfig.BindAddress)
-	api.SetupRoutes()
+
+	err = api.SetupRoutes()
+	fmt.Printf("http listener errored: %v", err)
+	os.Exit(1)
 }
