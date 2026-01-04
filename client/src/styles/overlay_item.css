@@ -5,7 +5,7 @@
 }
 
 .close-icon {
-    height: 1.25em;
+    height: 1.4em;
 }
 
 .close-icon:hover {
@@ -28,7 +28,7 @@
 
 .item-selected-wrapper {
     max-height: 80dvh;
-    width: 100dvw;
+    width: 90dvw;
     display: flex;
     flex-direction: column;
 }
@@ -41,8 +41,9 @@
     gap: 1em;
     z-index: 99;
     background-color: white;
-    padding: 1rem 1rem 0;
+    padding: 1.25rem 1.25rem 0;
     overflow-y: scroll;
+    border-radius: 0.4rem 0.4rem 0 0;
 }
 
 .item-selected-header {
@@ -122,11 +123,12 @@
 
 .item-selected-overlay nav {
     display: flex;
-    padding: 1rem;
+    padding: 1.25rem;
     flex-wrap: wrap;
     gap: 0.5em;
     background-color: white;
     width: 100%;
+    border-radius: 0 0 0.4rem 0.4rem;
 }
 
 .item-selected-overlay nav section {
@@ -144,9 +146,10 @@ button {
     justify-content: center;
     height: 3em;
     font-weight: 500;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     flex-grow: 1;
     border: none;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 button:hover {
@@ -154,21 +157,24 @@ button:hover {
 }
 
 button img {
-    filter: invert(1);
     height: 80%;
     margin: 0 0.5em 0 -0.5em;
 }
 
 .delete-button {
     background-color: #e63946;
+    color: white;
 }
 
 .save-button {
     background-color: #2ba84a;
+    color: white;
 }
 
-.save-button img {
-    filter: none;
+
+
+.edit-button img {
+    filter: invert(1);
 }
 
 .dropdown {

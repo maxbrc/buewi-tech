@@ -172,11 +172,21 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
 
     return (
         <div className="item-selected-overlay" onClick={ () => {
-            onClose(extendedItem.item.serial_number, false) 
-            setEditField(null)    
+            if (editField !== null) {
+                setEditField(null)
+            } else {
+                onClose(extendedItem.item.serial_number, false) 
+                setEditField(null)  
+            }
         }}>
             <div className="item-selected-wrapper">
-                <div className="item-selected" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                <div
+                    className="item-selected"
+                    onClick={ (e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        setEditField(null);
+                    }}
+                >
                     <div className="item-selected-header">
                         <img src={CategoryIcon} className="category-icon" />
                         <h3
@@ -460,6 +470,18 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                 </div>
                 <nav onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                     {editMode && <section>
+                        {!isInitialCreation &&
+                            <button
+                                className="delete-button"
+                                onClick={() => {
+                                    deleteItem();
+                                    setItems(currItems => currItems.filter(el => el.item.serial_number !== extendedItem.item.serial_number))
+                                    onClose(extendedItem.item.serial_number, false)
+                                }}
+                            >
+                                <img src={DeleteIcon}/>
+                                Löschen
+                            </button>}
                         {isInitialCreation ? (
                             <button
                                 className="save-button"
@@ -512,18 +534,6 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                 Speichern
                             </button>
                         )}
-                        {!isInitialCreation &&
-                            <button
-                                className="delete-button"
-                                onClick={() => {
-                                    deleteItem();
-                                    setItems(currItems => currItems.filter(el => el.item.serial_number !== extendedItem.item.serial_number))
-                                    onClose(extendedItem.item.serial_number, false)
-                                }}
-                            >
-                                <img src={DeleteIcon}/>
-                                Löschen
-                            </button>}
                     </section>}
                     {editMode &&
                         <button
