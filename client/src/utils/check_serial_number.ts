@@ -1,8 +1,6 @@
-import { Subcategory } from "../types/inventory";
-
 function validateSerialNumber(serialNumber: string, subcategory_id: number) {
     try {
-        validateSerialNumberTechnicals(serialNumber)
+        validateSerialNumberFormat(serialNumber)
     } catch (e) {
         throw e
     }
@@ -12,7 +10,7 @@ function validateSerialNumber(serialNumber: string, subcategory_id: number) {
     }
 }
 
-function validateSerialNumberTechnicals(serialNumber: string) {
+function validateSerialNumberFormat(serialNumber: string) {
     if (serialNumber.length !== 6) {
         throw new Error("Seriennummer muss 6 Zeichen lang sein")
     }
@@ -30,4 +28,4 @@ function validateSerialNumberTechnicals(serialNumber: string) {
     }
 }
 
-export { validateSerialNumber, validateSerialNumberTechnicals }
+export { validateSerialNumber, validateSerialNumberFormat }

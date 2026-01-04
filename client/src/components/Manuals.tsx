@@ -12,7 +12,7 @@ import NoteAddIcon from "../assets/note_add.svg";
 import CloseIcon from "../assets/close.svg";
 import AutosizeInput from "react-input-autosize";
 import EyeIcon from "../assets/eye.svg";
-import { validateSerialNumberTechnicals } from "../utils/check_serial_number";
+import { validateSerialNumberFormat } from "../utils/check_serial_number";
 
 function ManualUploadPopup({ onNext, onClose }: { onNext: (file: File) => void; onClose: () => void; }) {
     const [ files, setFiles ] = useState<FileList | null>(null);
@@ -65,7 +65,7 @@ function ManualRelationPopup({ onNext, onClose }: { onNext: (itemSerialNumber: s
 
     const handleFirstContinue = async () => {
         try {
-            validateSerialNumberTechnicals(itemSerialNumber)
+            validateSerialNumberFormat(itemSerialNumber)
         } catch (e) {
             createMessage(MessageType.ERROR, "Validierung der Seriennummer fehlgeschlagen: " + getErrorMessage(e))
             return
