@@ -4,8 +4,6 @@ import "../styles/popup.css";
 import { PopupContext } from "./App";
 
 function PopUp({ show, children }: { show: boolean; children: React.ReactNode; }) {
-    const { closePopup } = useContext(PopupContext);
-
     return (
         show &&
         <div

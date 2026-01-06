@@ -19,8 +19,37 @@ import BorrowingStatusChip from "./BorrowingStatusChip";
 import LocationBadge from "./LocationBadge";
 import CategorySelector from "./CategorySelector";
 import { validateSerialNumber } from "../utils/check_serial_number";
-import { AuthContext, MessageContext, RequestContext } from "./App";
+import { AuthContext, MessageContext, RequestContext, PopupContext } from "./App";
 import { MessageType } from "./MessageList";
+
+function DeleteConfirmationPopup({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void; }) {
+    return (
+        <>
+            <img
+                className="close-icon"
+                src={CloseIcon}
+                alt="Close Icon"
+                onClick={onClose}
+            />
+            <h2>Wirklich löschen?</h2>
+
+            <section>
+                <button
+                    className="delete-button"
+                    onClick={onConfirm}
+                >
+                    <img src={DeleteIcon}/>
+                    Löschen
+                </button>
+                <button
+                    onClick={onClose}
+                >
+                    Abbrechen
+                </button>
+            </section>
+        </>
+    )
+}
 
 function OverlayItem({ locations, categories, conditions, itemSelection, setItems, onClose }: { locations: LocationsResponse; categories: CategoriesResponse, conditions: ConditionsResponse, itemSelection: ItemSelection, setItems: React.Dispatch<React.SetStateAction<ExtendedItem[]>>; onClose: (refetchSn?: string) => void }) {
     const initialExtendedItem = itemSelection[0]
@@ -37,8 +66,8 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
     const date = new Date(timestamp)
 
     const { createMessage } = useContext(MessageContext);
-    const { validateSession } = useContext(AuthContext);
     const { makeRequest } = useContext(RequestContext);
+    const { showPopup, closePopup } = useContext(PopupContext);
 
     const closeOverlay = (refetchSn?: string) => {
         stopEdit()
@@ -509,7 +538,19 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                     <>
                                         <button
                                             className="delete-button"
-                                            onClick={deleteItemHandled}
+                                            onClick={
+                                                () => {
+                                                    showPopup(
+                                                        <DeleteConfirmationPopup
+                                                            onConfirm={() => {
+                                                                deleteItemHandled();
+                                                                closePopup();
+                                                            }}
+                                                            onClose={closePopup}
+                                                        />
+                                                    )
+                                                }
+                                            }
                                         >
                                             <img src={DeleteIcon}/>
                                             Löschen

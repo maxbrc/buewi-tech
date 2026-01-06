@@ -18,7 +18,6 @@ import { LocationsResponse } from "../types/locations";
 import { AuthContext, MessageContext, PopupContext, RequestContext } from "./App";
 import { validateSerialNumber } from "../utils/check_serial_number";
 import { MessageType } from "./MessageList";
-import { useOutletContext } from "react-router";
 
 function CategoryPopup({ onNext, onClose, categories }: { onNext: (selectedMainID: number, selectedSubID: number, selectedName: string) => void; onClose: () => void; categories: CategoriesResponse; }) {
     const [ categoryID, setCategoryID ] = useState<number>(0);
@@ -51,34 +50,37 @@ function CategoryPopup({ onNext, onClose, categories }: { onNext: (selectedMainI
                 onClick={onClose}
             />
             <h2>Item Erstellung</h2>
-            <span>1. Name wählen</span>
-            <AutosizeInput
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                value={name}
-                placeholder="Bezeichnung"
-            />
-            <span>2. Kategorie wählen</span>
-            <span
-                className="dropdown-header"
-                onClick={
-                    (e: React.MouseEvent) => {
-                        e.stopPropagation()
-                        setDropdownOpen(currOpen => !currOpen)
+            <section>
+                <span>1. Name wählen</span>
+                <AutosizeInput
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                    value={name}
+                    placeholder="Bezeichnung"
+                />
+            </section>
+            <section>
+                <span>2. Kategorie wählen</span>
+                <span
+                    className="dropdown-header"
+                    onClick={
+                        (e: React.MouseEvent) => {
+                            e.stopPropagation()
+                            setDropdownOpen(currOpen => !currOpen)
+                        }
                     }
-                }
-            >{subcategoryID === 0 || categoryID === 0 ? "Keine Kategorie gewählt" : `${subcategoryID}: ${categories[categoryID].sub[subcategoryID].name}`}<img src={ExpandCircleDownIcon} alt="Expand Icon" />
-                        {dropdownOpen && <CategorySelector
-                categories={categories}
-                preselectedSubcategoryID={subcategoryID}
-                onSelectCallback={
-                    (mainID: number, subID: number) => {
-                        setCategoryID(mainID)
-                        setSubcategoryID(subID)
+                >{subcategoryID === 0 || categoryID === 0 ? "Keine Kategorie gewählt" : `${subcategoryID}: ${categories[categoryID].sub[subcategoryID].name}`}<img src={ExpandCircleDownIcon} alt="Expand Icon" />
+                            {dropdownOpen && <CategorySelector
+                    categories={categories}
+                    preselectedSubcategoryID={subcategoryID}
+                    onSelectCallback={
+                        (mainID: number, subID: number) => {
+                            setCategoryID(mainID)
+                            setSubcategoryID(subID)
+                        }
                     }
-                }
-            />}
-            </span>
-
+                />}
+                </span>
+            </section>
             <button
                 onClick={handleContinue}
             >Weiter</button>
@@ -125,12 +127,14 @@ function SerialNumberPopup({ onNext, onClose, items, selectedSubcategory }: { on
             <span>3. Seriennummer wählen</span>
 
             <span>Automatisch gewählte SN: {automaticSerialNumber}</span>
-            <span>Seriennummer anpassen:</span>
-            <AutosizeInput
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSerialNumber(e.target.value)}
-                value={serialNumber}
-                placeholder="Seriennummer"
-            />
+            <section>
+                <span>Seriennummer anpassen:</span>
+                <AutosizeInput
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSerialNumber(e.target.value)}
+                    value={serialNumber}
+                    placeholder="Seriennummer"
+                />
+            </section>
 
             <button
                 onClick={() => {

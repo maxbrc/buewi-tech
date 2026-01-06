@@ -161,7 +161,7 @@ button img {
     margin: 0 0.5em 0 -0.5em;
 }
 
-.delete-button {
+.delete-button, .popup .delete-button {
     background-color: #e63946;
     color: white;
 }
@@ -170,8 +170,6 @@ button img {
     background-color: #2ba84a;
     color: white;
 }
-
-
 
 .edit-button img {
     filter: invert(1);
