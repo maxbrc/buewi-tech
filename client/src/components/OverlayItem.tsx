@@ -120,18 +120,24 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         }))
         
         const changes = getChangedFields(initialExtendedItem.item, extendedItem.item)
-        try {
-            await makeRequest<undefined>(`/api/items/${initialExtendedItem.item.serial_number}`, {
-                method: "PATCH",
-                body: JSON.stringify(changes)
-            })
-        } catch (e) {
-            throw new Error("Fehler beim übermitteln der Update Anfrage: " + getErrorMessage(e))
+        if (Object.keys(changes).length !== 0) {
+            try {
+                await makeRequest<undefined>(`/api/items/${initialExtendedItem.item.serial_number}`, {
+                    method: "PATCH",
+                    body: JSON.stringify(changes)
+                })
+            } catch (e) {
+                throw new Error("Fehler beim übermitteln der Update Anfrage: " + getErrorMessage(e))
+            }
+
+            onClose(extendedItem.item.serial_number)
+        } else {
+            createMessage(MessageType.INFO, "Keine Änderungen vorgenommen")
+            onClose()
         }
         
         setEditMode(false);
         setEditField(null);
-        onClose(extendedItem.item.serial_number)
     }
 
     const updateItemHandled = async () => {
@@ -143,7 +149,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
     }
 
     function getChangedFields(oldObj: {[key: string]: any}, newObj: {[key: string]: any}): {[key: string]: any} {
-        const changes: {[key: string]: any}= {};
+        const changes: {[key: string]: any} = {};
 
         for (const key in newObj) {
             if (newObj[key] !== oldObj[key]) {
