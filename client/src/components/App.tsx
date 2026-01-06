@@ -290,7 +290,7 @@ function App() {
             } catch (e) {
                 throw new Error("Fehler beim Validieren der Sitzung: " + getErrorMessage(e))
             }
-            console.log(accessTokenToUse)
+
             requestInit.headers = {
                 ...options?.headers,
                 "Authorization": "Bearer " + accessTokenToUse

@@ -130,6 +130,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                 throw new Error("Fehler beim übermitteln der Update Anfrage: " + getErrorMessage(e))
             }
 
+            createMessage(MessageType.SUCCESS, "Erfolgreich aktualisiert")
             onClose(extendedItem.item.serial_number)
         } else {
             createMessage(MessageType.INFO, "Keine Änderungen vorgenommen")
