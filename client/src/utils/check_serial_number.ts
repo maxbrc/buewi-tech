@@ -20,7 +20,7 @@ function validateSerialNumberFormat(serialNumber: string) {
     }
 
     if (isNaN(Number(serialNumber.slice(3)))) {
-        throw new Error("Laufender Teil der Seriennummer muss aus Zahlen bestehen")
+        throw new Error("Laufender Teil (..-XXX) der Seriennummer muss aus Zahlen bestehen")
     }
 
     if (serialNumber[2] !== "-") {

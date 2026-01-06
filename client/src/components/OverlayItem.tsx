@@ -40,68 +40,76 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
     const { validateSession } = useContext(AuthContext);
     const { makeRequest } = useContext(RequestContext);
 
-    const deleteItem = async () => {
-        let accessTokenToUse;
-        try {
-            accessTokenToUse = await validateSession()
-        } catch (e) {
-            createMessage(MessageType.ERROR, getErrorMessage(e))
-            return
-        }
-
-        const res = await fetch(`/api/items/${initialExtendedItem.item.serial_number}`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": "Bearer " + accessTokenToUse
-            }
-        })
-
-        switch (res.status) {
-            case 200:
-                createMessage(MessageType.SUCCESS, "Item erfolgreich gelöscht")
-                break
-            case 401:
-                throw new Error("Anfrage nicht autorisiert.")
-            case 500:
-                throw new Error("Internal Server Error: " + await res.text())
-            default:
-                throw new Error("Other Error: " + await res.text())
-        }
+    const closeOverlay = (refetchSn?: string) => {
+        stopEdit()
+        onClose(refetchSn)
     }
 
-    const postItem = async () => {
-        let accessTokenToUse;
-        try {
-            accessTokenToUse = await validateSession()
-        } catch (e) {
-            createMessage(MessageType.ERROR, getErrorMessage(e))
-            return
-        }
-
-        const res = await fetch("/api/items", {
-            method: "POST",
-            body: JSON.stringify(extendedItem.item),
-            headers: {
-                "Authorization": "Bearer " + accessTokenToUse
-            }
-        })
-
-        switch (res.status) {
-            case 200:
-                createMessage(MessageType.SUCCESS, "Item erfolgreich erstellt")
-                break
-            case 401:
-                throw new Error("Anfrage nicht autorisiert.")
-            case 500:
-                throw new Error("Internal Server Error: " + await res.text())
-            default:
-                throw new Error("Other Error: " + await res.text())
-        }
+    const stopEdit = () => {
+        setEditMode(false)
+        setEditField(null)
     }
 
     function getErrorMessage(error: unknown) {
         if (error instanceof Error) return error.message
         return String(error)
+    }
+
+    const deleteItem = async () => {
+        try {
+            await makeRequest<undefined>(`/api/items/${initialExtendedItem.item.serial_number}`, {
+                method: "DELETE"
+            })
+        } catch (e) {
+            throw new Error("Fehler beim übermitteln der Lösch Anfrage: " + getErrorMessage(e))
+        }
+
+        setItems(currItems => currItems.filter(el => el.item.serial_number !== extendedItem.item.serial_number))
+        createMessage(MessageType.SUCCESS, "Erfolgreich gelöscht")
+        closeOverlay()
+    }
+
+    const postItem = async () => {
+        try {
+            validateSerialNumber(extendedItem.item.serial_number, extendedItem.subcategory.id)
+        } catch (e) {
+            throw new Error("Fehler beim Validieren der Seriennummer: " + getErrorMessage(e))
+        }
+        
+        try {
+            await makeRequest<undefined>("/api/items", {
+                method: "POST",
+                body: JSON.stringify(extendedItem.item)
+            })
+        } catch (e) {
+            throw new Error("Fehler beim übermitteln der Erstellungs Anfrage: " + getErrorMessage(e))
+        }
+        
+        setItems(currItems => {
+            const searchedSubcategoryID = extendedItem.item.subcategory_id
+            const subcategoryStartIndex = currItems.findIndex(currItem => currItem.item.subcategory_id >= searchedSubcategoryID)
+            const subcategoryEndIndex = currItems.findLastIndex(currItem => currItem.item.subcategory_id <= searchedSubcategoryID) + 1
+
+            const extItemRunningNumber = parseInt(extendedItem.item.serial_number.slice(3))
+            
+            let insertIndex = subcategoryEndIndex
+            for (let i = subcategoryStartIndex; i < subcategoryEndIndex; i++) {
+                const currRunningNumber = parseInt(currItems[i].item.serial_number.slice(3))
+
+                if (currRunningNumber > extItemRunningNumber) {
+                    insertIndex = i
+                    break
+                }
+            }
+
+            const newItems = [...currItems]
+            newItems.splice(insertIndex, 0, extendedItem)
+
+            return newItems
+        })
+
+        createMessage(MessageType.SUCCESS, "Erfolgreich erstellt")
+        closeOverlay()
     }
 
     const updateItem = async () => {
@@ -120,25 +128,32 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         }))
         
         const changes = getChangedFields(initialExtendedItem.item, extendedItem.item)
-        if (Object.keys(changes).length !== 0) {
-            try {
-                await makeRequest<undefined>(`/api/items/${initialExtendedItem.item.serial_number}`, {
-                    method: "PATCH",
-                    body: JSON.stringify(changes)
-                })
-            } catch (e) {
-                throw new Error("Fehler beim übermitteln der Update Anfrage: " + getErrorMessage(e))
-            }
 
-            createMessage(MessageType.SUCCESS, "Erfolgreich aktualisiert")
-            onClose(extendedItem.item.serial_number)
-        } else {
+        if (Object.keys(changes).length === 0) {
             createMessage(MessageType.INFO, "Keine Änderungen vorgenommen")
-            onClose()
+            closeOverlay()
+            return
         }
-        
-        setEditMode(false);
-        setEditField(null);
+
+        try {
+            await makeRequest<undefined>(`/api/items/${initialExtendedItem.item.serial_number}`, {
+                method: "PATCH",
+                body: JSON.stringify(changes)
+            })
+        } catch (e) {
+            throw new Error("Fehler beim übermitteln der Update Anfrage: " + getErrorMessage(e))
+        }
+
+        createMessage(MessageType.SUCCESS, "Erfolgreich aktualisiert")
+        closeOverlay(extendedItem.item.serial_number)
+    }
+
+    const postItemHandled = async () => {
+        try {
+            await postItem()
+        } catch (e) {
+            createMessage(MessageType.ERROR, getErrorMessage(e))
+        }
     }
 
     const updateItemHandled = async () => {
@@ -147,6 +162,14 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         } catch (e) {
             createMessage(MessageType.ERROR, getErrorMessage(e))
         }
+    }
+
+    const deleteItemHandled = async () => {
+        try {
+            await deleteItem();
+        } catch (e) {
+            createMessage(MessageType.ERROR, getErrorMessage(e))
+        }   
     }
 
     function getChangedFields(oldObj: {[key: string]: any}, newObj: {[key: string]: any}): {[key: string]: any} {
@@ -178,8 +201,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
             if (editField !== null) {
                 setEditField(null)
             } else {
-                onClose() 
-                setEditField(null)  
+                closeOverlay() 
             }
         }}>
             <div className="item-selected-wrapper">
@@ -472,88 +494,55 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
 
                 </div>
                 <nav onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-                    {editMode && <section>
-                        {!isInitialCreation &&
+                    {editMode ? (
+                        <>
+                            <div>
+                                {isInitialCreation ? (
+                                    <button
+                                        className="save-button"
+                                        onClick={postItemHandled}
+                                    >
+                                        <img src={AddIcon} alt="Add Icon"/>
+                                        Erstellen
+                                    </button>
+                                ) : (
+                                    <>
+                                        <button
+                                            className="delete-button"
+                                            onClick={deleteItemHandled}
+                                        >
+                                            <img src={DeleteIcon}/>
+                                            Löschen
+                                        </button>
+                                        <button
+                                            className="save-button"
+                                            onClick={updateItemHandled}
+                                        >
+                                            <img src={SaveIcon} alt="Save Icon" />
+                                            Speichern
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+
                             <button
-                                className="delete-button"
                                 onClick={() => {
-                                    deleteItem();
-                                    setItems(currItems => currItems.filter(el => el.item.serial_number !== extendedItem.item.serial_number))
-                                    onClose()
+                                    if (isInitialCreation) closeOverlay();
+                                    else stopEdit();
                                 }}
                             >
-                                <img src={DeleteIcon}/>
-                                Löschen
-                            </button>}
-                        {isInitialCreation ? (
-                            <button
-                                className="save-button"
-                                onClick={() => {
-                                    try {
-                                        validateSerialNumber(extendedItem.item.serial_number, extendedItem.subcategory.id)
-                                    } catch (e) {
-                                        if (e instanceof Error) createMessage(MessageType.ERROR, e.message)
-                                        else alert("fatal error, code #2 an max")
-                                        return
-                                    }
-                                    postItem();
-                                    setEditMode(false);
-                                    setEditField(null);
-                                    setItems(currItems => {
-                                        const searchedSubcategoryID = extendedItem.item.subcategory_id
-                                        const subcategoryStartIndex = currItems.findIndex(currItem => currItem.item.subcategory_id >= searchedSubcategoryID)
-                                        const subcategoryEndIndex = currItems.findLastIndex(currItem => currItem.item.subcategory_id <= searchedSubcategoryID) + 1
-
-                                        const extItemRunningNumber = parseInt(extendedItem.item.serial_number.slice(3))
-                                        
-                                        let insertIndex = subcategoryEndIndex
-                                        for (let i = subcategoryStartIndex; i < subcategoryEndIndex; i++) {
-                                            const currRunningNumber = parseInt(currItems[i].item.serial_number.slice(3))
-
-                                            if (currRunningNumber > extItemRunningNumber) {
-                                                insertIndex = i
-                                                break
-                                            }
-                                        }
-
-                                        const newItems = [...currItems]
-                                        newItems.splice(insertIndex, 0, extendedItem)
-
-                                        return newItems
-                                    })
-
-                                    onClose()
-                                }}
-                            >
-                                <img src={AddIcon} alt="Add Icon"/>
-                                Erstellen
+                                Abbrechen
                             </button>
-                        ) : (
-                            <button
-                                className="save-button"
-                                onClick={updateItemHandled}
-                            >
-                                <img src={SaveIcon} alt="Save Icon" />
-                                Speichern
-                            </button>
-                        )}
-                    </section>}
-                    {editMode &&
+                        </>
+                    ) : (
                         <button
-                            onClick={
-                                () => {
-                                    if (isInitialCreation) {
-                                        onClose();
-                                    } else {
-                                        setEditMode(false);
-                                        setEditField(null);
-                                    }
-                                }
-                            }
+                            className="edit-button"
+                            onClick={() => setEditMode(true)}
                         >
-                            Abbrechen
-                        </button>}
-                    {!editMode && <button className="edit-button" onClick={() => setEditMode(true)}><img src={EditIcon} />Bearbeiten</button>}
+                            <img src={EditIcon} />
+                            Bearbeiten
+                        </button>
+                    )}
                 </nav>
             </div>
         </div>

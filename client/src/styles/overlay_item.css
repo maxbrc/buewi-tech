@@ -131,7 +131,7 @@
     border-radius: 0 0 0.4rem 0.4rem;
 }
 
-.item-selected-overlay nav section {
+.item-selected-overlay nav div {
     flex-basis: 100%;
     display: flex;
     gap: 0.5em;
