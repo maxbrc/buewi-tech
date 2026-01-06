@@ -10,13 +10,13 @@ import { Icons } from "./Icons";
 import "../styles/inventory.css";
 import { ExtendedItem, ItemSelection } from "../types/inventory";
 
-const InventoryItem = memo(function InventoryItem({ extendedItem, setSelectedItem, callbackFn }: { extendedItem: ExtendedItem, setSelectedItem: (itemSelection: ItemSelection | null) => void, callbackFn?: () => void; }) {
+const InventoryItem = memo(function InventoryItem({ extendedItem, setSelectedItem, callbackFn }: { extendedItem: ExtendedItem, setSelectedItem: (itemSelection: ItemSelection | null) => void, callbackFn: () => void; }) {
     const borrowingEvent = extendedItem.borrowing_event
 
     return (
         <tr onClick={() => {
             setSelectedItem([extendedItem, false, false])
-            if (callbackFn !== undefined) callbackFn()
+            callbackFn()
         }
         }>
             <td className="category">

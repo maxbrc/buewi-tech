@@ -216,9 +216,9 @@ function Inventory() {
     const refetchAndUpdateItem = async (serialNumber: string): Promise<void> => {
         let newItem: ExtendedItem;
         try {
-            newItem = await makeRequest<ExtendedItem>("/api/conditions")
+            newItem = await makeRequest<ExtendedItem>(`/api/items/${serialNumber}`)
         } catch (e) {
-            throw new Error("Fehler beim Abrufen der Locations: " + getErrorMessage(e))
+            throw new Error("Fehler beim Refetching des Items: " + getErrorMessage(e))
         }
 
         setItems(currItems => currItems.map(el => {
@@ -401,8 +401,8 @@ function Inventory() {
                     itemSelection={selectedItem}
                     setItems={setItems}
                     onClose={
-                        (sn: string, refetch: boolean) => {
-                            if (refetch) setItemToRefetch(sn)
+                        (refetchSn?: string) => {
+                            if (refetchSn !== undefined) setItemToRefetch(refetchSn)
 
                             setSelectedItem(null)
                         }

@@ -22,7 +22,7 @@ import { validateSerialNumber } from "../utils/check_serial_number";
 import { AuthContext, MessageContext, RequestContext } from "./App";
 import { MessageType } from "./MessageList";
 
-function OverlayItem({ locations, categories, conditions, itemSelection, setItems, onClose }: { locations: LocationsResponse; categories: CategoriesResponse, conditions: ConditionsResponse, itemSelection: ItemSelection, setItems: React.Dispatch<React.SetStateAction<ExtendedItem[]>>; onClose: (sn: string, refetch: boolean) => void }) {
+function OverlayItem({ locations, categories, conditions, itemSelection, setItems, onClose }: { locations: LocationsResponse; categories: CategoriesResponse, conditions: ConditionsResponse, itemSelection: ItemSelection, setItems: React.Dispatch<React.SetStateAction<ExtendedItem[]>>; onClose: (refetchSn?: string) => void }) {
     const initialExtendedItem = itemSelection[0]
     const conditionCommentRef = useRef<HTMLTextAreaElement>(null);
 
@@ -36,6 +36,8 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
     const timestamp = Date.parse(extendedItem.item.last_update_utc)
     const date = new Date(timestamp)
 
+    const { createMessage } = useContext(MessageContext);
+    const { validateSession } = useContext(AuthContext);
     const { makeRequest } = useContext(RequestContext);
 
     const deleteItem = async () => {
@@ -129,7 +131,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         
         setEditMode(false);
         setEditField(null);
-        onClose(extendedItem.item.serial_number, true)
+        onClose(extendedItem.item.serial_number)
     }
 
     const updateItemHandled = async () => {
@@ -152,10 +154,6 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         return changes;
     }
 
-    const updateItemClickHandler = async () => {
-        
-    }
-
     useEffect(() => {
         if (shouldFocusComment) {
             if (conditionCommentRef.current === null) {
@@ -163,19 +161,17 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                 return
             }
             conditionCommentRef.current.focus();
+            conditionCommentRef.current.selectionStart = conditionCommentRef.current.value.length;
             setShouldFocusComment(false)
         }
     }, [shouldFocusComment])
-
-    const { createMessage } = useContext(MessageContext);
-    const { validateSession } = useContext(AuthContext);
 
     return (
         <div className="item-selected-overlay" onClick={ () => {
             if (editField !== null) {
                 setEditField(null)
             } else {
-                onClose(extendedItem.item.serial_number, false) 
+                onClose() 
                 setEditField(null)  
             }
         }}>
@@ -223,7 +219,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                 value={extendedItem.item.name}
                             />
                         </h3>
-                        <img src={CloseIcon} className="close-icon" onClick={ () => onClose(extendedItem.item.serial_number, false) } />
+                        <img src={CloseIcon} className="close-icon" onClick={ () => onClose() } />
                     </div>
                     <div className="item-selected-body">
                         <section>
@@ -476,7 +472,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                 onClick={() => {
                                     deleteItem();
                                     setItems(currItems => currItems.filter(el => el.item.serial_number !== extendedItem.item.serial_number))
-                                    onClose(extendedItem.item.serial_number, false)
+                                    onClose()
                                 }}
                             >
                                 <img src={DeleteIcon}/>
@@ -519,7 +515,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                         return newItems
                                     })
 
-                                    onClose(extendedItem.item.serial_number, false)
+                                    onClose()
                                 }}
                             >
                                 <img src={AddIcon} alt="Add Icon"/>
@@ -540,7 +536,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                             onClick={
                                 () => {
                                     if (isInitialCreation) {
-                                        onClose(extendedItem.item.serial_number, false);
+                                        onClose();
                                     } else {
                                         setEditMode(false);
                                         setEditField(null);
