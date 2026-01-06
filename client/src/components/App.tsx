@@ -172,8 +172,30 @@ function App() {
     }, [])
 
     const validateSession = useCallback(async (overrideToken?: string): Promise<string> => {
-            let tokenToUse = accessToken;
-            if (overrideToken !== undefined) tokenToUse = overrideToken
+        let tokenToUse: string | null = null;
+        setAccessToken(token => {
+            tokenToUse = token;
+            return token
+        })
+        if (overrideToken !== undefined) tokenToUse = overrideToken
+
+        let valRes;
+        try {
+            valRes = checkAccessTokenValid(tokenToUse)
+        } catch (e) {
+            throw e
+        }
+
+        let sessionValidTracker = false;
+
+        if (!valRes.valid || valRes.leewayUsed) {
+            try {
+                tokenToUse = await tryRefresh();
+            } catch (e) {
+                throw new Error("Erneuerung der Sitzung fehlgeschlagen: " + getErrorMessage(e))
+            }
+
+            if (tokenToUse === null) return handleUnauthorizedSession()
 
             let valRes;
             try {
@@ -182,38 +204,18 @@ function App() {
                 throw e
             }
 
-            let sessionValidTracker = false;
+            if (!valRes.valid) return handleUnauthorizedSession()
+        }
 
-            if (!valRes.valid || valRes.leewayUsed) {
-                try {
-                    tokenToUse = await tryRefresh();
-                } catch (e) {
-                    throw new Error("Erneuerung der Sitzung fehlgeschlagen: " + getErrorMessage(e))
-                }
+        sessionValidTracker = true
 
-                if (tokenToUse === null) return handleUnauthorizedSession()
+        // This should NEVER hit
+        if (tokenToUse === null) return handleUnauthorizedSession()
 
-                let valRes;
-                try {
-                    valRes = checkAccessTokenValid(tokenToUse)
-                } catch (e) {
-                    throw e
-                }
+        setAccessToken(tokenToUse)
+        setSessionValid(sessionValidTracker)
 
-                if (!valRes.valid) return handleUnauthorizedSession()
-
-                sessionValidTracker = true
-            } else {
-                sessionValidTracker = true
-            }
-
-            // This should NEVER hit
-            if (tokenToUse === null) return handleUnauthorizedSession()
-
-            setAccessToken(tokenToUse)
-            setSessionValid(sessionValidTracker)
-
-            return tokenToUse
+        return tokenToUse
     }, [])
 
     interface TokenRefreshResponse {
@@ -288,7 +290,7 @@ function App() {
             } catch (e) {
                 throw new Error("Fehler beim Validieren der Sitzung: " + getErrorMessage(e))
             }
-
+            console.log(accessTokenToUse)
             requestInit.headers = {
                 ...options?.headers,
                 "Authorization": "Bearer " + accessTokenToUse
