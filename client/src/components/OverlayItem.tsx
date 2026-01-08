@@ -70,9 +70,9 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
     const { makeRequest } = useContext(RequestContext);
     const { showPopup, closePopup } = useContext(PopupContext);
 
-    const closeOverlay = (refetchSn?: string) => {
+    const closeOverlay = (refetch: boolean = false) => {
         stopEdit()
-        onClose(refetchSn)
+        onClose(refetch ? undefined : extendedItem.item.serial_number)
     }
 
     const stopEdit = () => {
@@ -175,7 +175,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         }
 
         createMessage(MessageType.SUCCESS, "Erfolgreich aktualisiert")
-        closeOverlay(extendedItem.item.serial_number)
+        closeOverlay(true)
     }
 
     const postItemHandled = async () => {
