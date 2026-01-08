@@ -42,6 +42,7 @@ function DeleteConfirmationPopup({ onConfirm, onClose }: { onConfirm: () => void
                     Löschen
                 </button>
                 <button
+                    className="abort-button"
                     onClick={onClose}
                 >
                     Abbrechen
@@ -224,6 +225,12 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
             setShouldFocusComment(false)
         }
     }, [shouldFocusComment])
+
+    useEffect(() => {
+        if (extendedItem.item.condition_comment === "__null__") {
+            conditionCommentRef.current?.focus()
+        }
+    }, [extendedItem.item.condition_comment])
 
     return (
         <div className="item-selected-overlay" onClick={ () => {
@@ -487,6 +494,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                 {
                                     editField==5 ? (
                                         <textarea
+                                            name="Zustandskommentar"
                                             ref={conditionCommentRef}
                                             rows={2}
                                             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -512,7 +520,38 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                         )
                                     )
                                 }
-                                {editMode && <img src={EditIcon} />}
+                                {editMode && (
+                                    editField == 5 ? (
+                                        <section>
+                                            <img
+                                                src={DeleteIcon}
+                                                onClick={(e: React.MouseEvent) => {
+                                                    e.stopPropagation();
+                                                    setExtendedItem(currExtendedItem => {
+                                                        setShouldFocusComment(true)
+                                                        return {
+                                                            ...currExtendedItem,
+                                                            item: {
+                                                                ...currExtendedItem.item,
+                                                                condition_comment: "__null__"
+                                                            }
+                                                        }
+                                                    })
+                                                    
+                                                }}
+                                            />
+                                            <img
+                                                src={CheckIcon}
+                                                onClick={(e: React.MouseEvent) => {
+                                                    e.stopPropagation()
+                                                    setEditField(null);
+                                                }}
+                                            />
+                                        </section>
+                                    ) : (
+                                        <img src={EditIcon} />
+                                    ) 
+                                )}
                             </span>    
                         </section>
                         <section>
