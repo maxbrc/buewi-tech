@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import AutosizeInput from "react-input-autosize";
+import { diff } from "deep-object-diff";
 
 import { Icons } from "./Icons";
 import { ItemSelection, CategoriesResponse, ConditionsResponse, ExtendedItem } from "../types/inventory";
@@ -70,9 +71,17 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
     const { makeRequest } = useContext(RequestContext);
     const { showPopup, closePopup } = useContext(PopupContext);
 
-    const closeOverlay = (refetch: boolean = false) => {
+    const closeOverlayDirectly = (refetch: boolean = true) => {
         stopEdit()
         onClose(refetch ? undefined : extendedItem.item.serial_number)
+    }
+
+    const closeOverlayWithCheck = () => {
+        if (Object.keys(diff(initialExtendedItem.item, extendedItem.item)).length !== 0) {
+            console.log(diff(initialExtendedItem, extendedItem))
+        } else {
+            closeOverlayDirectly()
+        }
     }
 
     const stopEdit = () => {
@@ -96,7 +105,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
 
         setItems(currItems => currItems.filter(el => el.item.serial_number !== extendedItem.item.serial_number))
         createMessage(MessageType.SUCCESS, "Erfolgreich gelöscht")
-        closeOverlay()
+        closeOverlayDirectly()
     }
 
     const postItem = async () => {
@@ -139,7 +148,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         })
 
         createMessage(MessageType.SUCCESS, "Erfolgreich erstellt")
-        closeOverlay()
+        closeOverlayDirectly()
     }
 
     const updateItem = async () => {
@@ -157,11 +166,11 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
             }
         }))
         
-        const changes = getChangedFields(initialExtendedItem.item, extendedItem.item)
+        const changes = diff(initialExtendedItem.item, extendedItem.item)
 
         if (Object.keys(changes).length === 0) {
             createMessage(MessageType.INFO, "Keine Änderungen vorgenommen")
-            closeOverlay()
+            closeOverlayDirectly()
             return
         }
 
@@ -175,7 +184,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         }
 
         createMessage(MessageType.SUCCESS, "Erfolgreich aktualisiert")
-        closeOverlay(true)
+        closeOverlayDirectly(true)
     }
 
     const postItemHandled = async () => {
@@ -202,18 +211,6 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
         }   
     }
 
-    function getChangedFields(oldObj: {[key: string]: any}, newObj: {[key: string]: any}): {[key: string]: any} {
-        const changes: {[key: string]: any} = {};
-
-        for (const key in newObj) {
-            if (newObj[key] !== oldObj[key]) {
-                changes[key] = newObj[key];
-            }
-        }
-
-        return changes;
-    }
-
     useEffect(() => {
         if (shouldFocusComment) {
             if (conditionCommentRef.current === null) {
@@ -237,7 +234,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
             if (editField !== null) {
                 setEditField(null)
             } else {
-                closeOverlay() 
+                closeOverlayWithCheck()
             }
         }}>
             <div className="item-selected-wrapper">
@@ -284,7 +281,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
                                 value={extendedItem.item.name}
                             />
                         </h3>
-                        <img src={CloseIcon} className="close-icon" onClick={ () => onClose() } />
+                        <img src={CloseIcon} className="close-icon" onClick={ () => closeOverlayWithCheck() } />
                     </div>
                     <div className="item-selected-body">
                         <section>
@@ -607,7 +604,7 @@ function OverlayItem({ locations, categories, conditions, itemSelection, setItem
 
                             <button
                                 onClick={() => {
-                                    if (isInitialCreation) closeOverlay();
+                                    if (isInitialCreation) closeOverlayDirectly();
                                     else stopEdit();
                                 }}
                             >
