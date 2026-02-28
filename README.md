@@ -1,6 +1,5 @@
 # buewi-tech
-Management Seite für die Veranstaltungstechnik des Gymnasium Bürgerwiese.
-
+Management application for the event technology of the Gymnasium Bürgerwiese Dresden.
 # Planned Features
 ## Definitely
 - Permissions
@@ -16,6 +15,10 @@ Management Seite für die Veranstaltungstechnik des Gymnasium Bürgerwiese.
         - Conditions
 - "Publicly" accessible contact information
 - User profile management
+- Basic security fixes
+      - Login rate limit
+      - Error message obscurity
+      - Ones that I notice at some point
 ## At some point
 - Batch actions for items
 - Item history
@@ -23,3 +26,23 @@ Management Seite für die Veranstaltungstechnik des Gymnasium Bürgerwiese.
     - Detailed history of edits
     - Possibly implementation of rollbacks
 - Accouncement/note board
+# How to run
+## Development
+1. Pull the source code
+2. In the root directory create a folder called `secrets`
+3. Create the Ed25519 a private key seed: `head -c 32 /dev/urandom > secrets/ed25519_seed.bin`
+4. Install all client dependencies: `cd client && npm install`
+5. Run the server
+5.1. `cd server`
+5.2. `go run ./cmd/main.go`
+6. Run the client
+6.1. `cd client`
+6.2. `npm run dev`
+## Build
+1. Follow the dev guide including step 3
+2. Build the client
+2.1. `cd client`
+2.2. Install build dependencies: `cd client && npm install --production`
+2.3. Build the client: `npm run build`
+3. Build the server: `cd server && go build ./cmd/main.go`
+4. Clean up unnecessary files
