@@ -33,16 +33,26 @@ Management application for the event technology of the Gymnasium Bürgerwiese Dr
 3. Create the Ed25519 a private key seed: `head -c 32 /dev/urandom > secrets/ed25519_seed.bin`
 4. Install all client dependencies: `cd client && npm install`
 5. Run the server
+
 5.1. `cd server`
+
 5.2. `go run ./cmd/main.go`
+
 6. Run the client
+
 6.1. `cd client`
+
 6.2. `npm run dev`
+
 ## Build
 1. Follow the dev guide including step 3
 2. Build the client
+
 2.1. `cd client`
+
 2.2. Install build dependencies: `cd client && npm install --production`
+
 2.3. Build the client: `npm run build`
-3. Build the server: `cd server && go build ./cmd/main.go`
-4. Clean up unnecessary files
+
+4. Build the server: `cd server && go build ./cmd/main.go`
+5. Clean up unnecessary files
