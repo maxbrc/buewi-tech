@@ -28,7 +28,6 @@
     "mini-css-extract-plugin": "^2.9.2",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
-    "tsc-watch": "^7.1.1",
     "typescript": "^5.8.3",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
