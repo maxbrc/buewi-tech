@@ -51,3 +51,5 @@ The following shows you a basic guide on how to develop on and build the project
 - Build the client: `npm run build`
 4. Build the server: `cd server && go build ./cmd/main.go`
 5. Clean up unnecessary files
+## Important Note
+When you work on the project yourself and want to change dependencies through npm, make sure to append the `--legacy-peer-deps` flag, as the ReactAutosizeInput package is technically deprecated for this version of React.
