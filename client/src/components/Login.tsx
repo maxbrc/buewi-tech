@@ -9,33 +9,23 @@ import LockIcon from "../assets/lock.svg";
 import EyeIcon from "../assets/eye.svg";
 import EyeOffIcon from "../assets/eye_off.svg";
 import { AuthContext, MessageContext, RequestContext } from "./App";
-import MessageList, { MessageType } from "./MessageList";
-import { Message } from "./MessageList";
+import MessageList from "./MessageList";
+import { Message, MessageType } from "../types/message";
 
 function Login({ messages }: { messages: Message[]; }) {
     const [ username, setUsername ] = useState("");
     const [ password, setPassword ] = useState("");
     const [ showPassword, setShowPassword ] = useState(false);
-    
-    const navigate = useNavigate()
 
-    const { sessionValid, validateSession, handleUnauthorizedSession } = useContext(AuthContext)
-
-    useEffect(() => {
-        if (sessionValid) {
-            navigate("/", {
-                replace: true
-            })
-        }
-    }, [sessionValid])
+    const { validateSession, handleUnauthorizedSession } = useContext(AuthContext);
 
     interface SuccessfulLoginResponse {
         access_token: string;
     }
 
     const resetInputs = useCallback(() => {
-        setUsername("")
-        setPassword("")
+        setUsername("");
+        setPassword("");
     }, [])
 
     function getErrorMessage(error: unknown) {

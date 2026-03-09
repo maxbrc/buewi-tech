@@ -13,11 +13,11 @@ import ResetSettingsIcon from "../assets/reset_settings.svg";
 import ExpandCircleDownIcon from "../assets/expand_circle_down.svg";
 import CloseIcon from "../assets/close.svg";
 
-import { ExtendedItem, CategoriesResponse, ConditionsResponse, ItemSelection, Subcategory, Item } from "../types/inventory";
+import { EnrichedItem, CategoriesResponse, ConditionsResponse, ItemSelection, Subcategory, Item } from "../types/inventory";
 import { LocationsResponse } from "../types/locations";
 import { AuthContext, MessageContext, PopupContext, RequestContext } from "./App";
 import { validateSerialNumber } from "../utils/check_serial_number";
-import { MessageType } from "./MessageList";
+import { MessageType } from "../types/message";
 
 function CategoryPopup({ onNext, onClose, categories }: { onNext: (selectedMainID: number, selectedSubID: number, selectedName: string) => void; onClose: () => void; categories: CategoriesResponse; }) {
     const [ categoryID, setCategoryID ] = useState<number>(0);
@@ -88,7 +88,7 @@ function CategoryPopup({ onNext, onClose, categories }: { onNext: (selectedMainI
     )
 }
 
-function SerialNumberPopup({ onNext, onClose, items, selectedSubcategory }: { onNext: (serialNumber: string) => void; onClose: () => void; items: ExtendedItem[]; selectedSubcategory: Subcategory; }) {
+function SerialNumberPopup({ onNext, onClose, items, selectedSubcategory }: { onNext: (serialNumber: string) => void; onClose: () => void; items: EnrichedItem[]; selectedSubcategory: Subcategory; }) {
     const [ serialNumber, setSerialNumber ] = useState<string>("");
     const [ automaticSerialNumber, setAutomaticSerialNumber ] = useState<string>("");
     const [ usedSerialNumbers, setUsedSerialNumbers ] = useState<string[]>([]);
@@ -162,9 +162,9 @@ function Inventory() {
     const [ categories, setCategories ] = useState<CategoriesResponse>({})
     const [ conditions, setConditions ] = useState<ConditionsResponse>({})
     const [ locations, setLocations ] = useState<LocationsResponse>({});
-    const [ items, setItems ] = useState<ExtendedItem[]>([]);
+    const [ items, setItems ] = useState<EnrichedItem[]>([]);
 
-    const [ filteredItems, setFilteredItems ] = useState<ExtendedItem[]>([]);
+    const [ filteredItems, setFilteredItems ] = useState<EnrichedItem[]>([]);
     const [ search, setSearch ] = useState<string>("");
     const [ timerID, setTimerID ] = useState<number>();
     const [ searchCategoryID, setSearchCategoryID ] = useState<number>(0);
@@ -207,9 +207,9 @@ function Inventory() {
         }
         setLocations(locationsResponse)
 
-        let itemsResponse: ExtendedItem[];
+        let itemsResponse: EnrichedItem[];
         try {
-            itemsResponse = await makeRequest<ExtendedItem[]>("/api/items")
+            itemsResponse = await makeRequest<EnrichedItem[]>("/api/items")
         } catch (e) {
             throw new Error("Fehler beim Abrufen der Items: " + getErrorMessage(e))
         }
@@ -218,9 +218,9 @@ function Inventory() {
     }
 
     const refetchAndUpdateItem = async (serialNumber: string): Promise<void> => {
-        let newItem: ExtendedItem;
+        let newItem: EnrichedItem;
         try {
-            newItem = await makeRequest<ExtendedItem>(`/api/items/${serialNumber}`)
+            newItem = await makeRequest<EnrichedItem>(`/api/items/${serialNumber}`)
         } catch (e) {
             throw new Error("Fehler beim Refetching des Items: " + getErrorMessage(e))
         }
@@ -292,7 +292,7 @@ function Inventory() {
             location_id: 1,
         }
 
-        const extendedItem: ExtendedItem = {
+        const extendedItem: EnrichedItem = {
             item: baseItem,
             category: categories[mainID].main,
             subcategory: categories[mainID].sub[subID],

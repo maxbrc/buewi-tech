@@ -4,14 +4,12 @@ import { useContext } from "react";
 import Header from "./Header";
 import PopUp from "./PopUp";
 import MessageList from "./MessageList";
-import { Message } from "./MessageList";
+import { Message } from "../types/message";
 
 import "../styles/base_layout.css";
 import { AuthContext } from "./App";
 
-
 function Base({ messages, displayPopup, popupChildren, showHeaderHomeIcon = true }: { messages: Message[], displayPopup: boolean; popupChildren: React.ReactNode; showHeaderHomeIcon?: boolean; }) {
-
     const { sessionValid } = useContext(AuthContext);
 
     return (

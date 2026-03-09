@@ -1,8 +1,8 @@
 import { memo } from "react";
-import { ExtendedItem, ItemSelection } from "../types/inventory";
+import { EnrichedItem, ItemSelection } from "../types/inventory";
 import InventoryItem from "./InventoryItem";
 
-const InventoryList = memo(function InventoryList({ extendedItems, setSelectedItem, callbackFn }: { extendedItems: ExtendedItem[], setSelectedItem: (itemSelection: ItemSelection | null) => void; callbackFn: () => void; }) {
+const InventoryList = memo(function InventoryList({ extendedItems, setSelectedItem, callbackFn }: { extendedItems: EnrichedItem[], setSelectedItem: (itemSelection: ItemSelection | null) => void; callbackFn: () => void; }) {
     return (
         <table>
             <tbody>

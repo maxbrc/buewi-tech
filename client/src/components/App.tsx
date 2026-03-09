@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useCallback } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import { v4 as uuid } from "uuid";
 import "../styles/reset.css"
@@ -11,15 +11,12 @@ import Login from "./Login";
 import BorrowingPortal from "./BorrowingPortal";
 import AdminPanel from "./AdminPanel";
 import Manuals from "./Manuals";
-import { MessageType, Message } from "./MessageList";
+import { MessageType, Message, MessageContextType } from "../types/message";
 
 import "../styles/app.css";
-import { BackendResponse } from "../types/http";
-
-interface PopupContextType {
-  showPopup: (children: React.ReactNode) => void;
-  closePopup: () => void;
-};
+import { BackendResponse, RequestContextType } from "../types/http";
+import { TokenRefreshResponse, AuthContextType } from "../types/auth";
+import { PopupContextType } from "../types/popup";
 
 export const PopupContext = createContext<PopupContextType>({
   showPopup: () => {
@@ -30,13 +27,6 @@ export const PopupContext = createContext<PopupContextType>({
   }
 });
 
-interface AuthContextType {
-    sessionValid: boolean;
-    validateSession: (overrideToken?: string) => Promise<string>;
-    logout: () => Promise<void>;
-    handleUnauthorizedSession: () => never;
-}
-
 export const AuthContext = createContext<AuthContextType>({
     sessionValid: false,
     validateSession: async () => "null",
@@ -44,17 +34,9 @@ export const AuthContext = createContext<AuthContextType>({
     handleUnauthorizedSession: () => new Promise(() => {}) as never
 })
 
-interface MessageContextType {
-    createMessage: (messageType: MessageType, content: string) => void;
-}
-
 export const MessageContext = createContext<MessageContextType>({
     createMessage: (type: MessageType, content: string) => {console.error("default message context used. bad coding!")}
 })
-
-interface RequestContextType {
-    makeRequest: <T>(url: string, options?: RequestInit, requireAuth?: boolean) => Promise<T>;
-}
 
 export const RequestContext = createContext<RequestContextType>({
    makeRequest: async (url: string, options?: RequestInit, requireAuth: boolean = true) => {throw new Error("EWR")}
@@ -67,7 +49,7 @@ interface TokenValidation {
 
 function App() {
     const [ displayPopup, setDisplayPopup ] = useState(false);
-    const [ popupChildren, setPopupChildren ] = useState<React.ReactNode>(null);
+    const [ popupChildNode, setPopupChildNode ] = useState<React.ReactNode>(null);
     const [ accessToken, setAccessToken ] = useState<string | null>(null);
     const [ sessionValid, setSessionValid ] = useState(false);
     const [ messages, setMessages ] = useState<Message[]>([]);
@@ -76,13 +58,13 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const showPopup = (children: React.ReactNode) => {
-        setPopupChildren(children)
+    const showPopup = (childNode: React.ReactNode) => {
+        setPopupChildNode(childNode)
         setDisplayPopup(true)
     }
 
     const closePopup = () => {
-        setPopupChildren(null)
+        setPopupChildNode(null)
         setDisplayPopup(false)
     }
 
@@ -173,11 +155,14 @@ function App() {
 
     const validateSession = useCallback(async (overrideToken?: string): Promise<string> => {
         let tokenToUse: string | null = null;
-        setAccessToken(token => {
-            tokenToUse = token;
-            return token
-        })
-        if (overrideToken !== undefined) tokenToUse = overrideToken
+        if (overrideToken !== undefined) {
+            tokenToUse = overrideToken
+        } else {
+            setAccessToken(token => {
+                tokenToUse = token;
+                return token
+            })
+        }
 
         let valRes;
         try {
@@ -186,9 +171,14 @@ function App() {
             throw e
         }
 
+        if (valRes.valid && !valRes.leewayUsed) {
+            if (tokenToUse !== null) return tokenToUse
+            else throw new Error("Sitzung valid ohne Access Token!?")
+        }
+
         let sessionValidTracker = false;
 
-        if (!valRes.valid || valRes.leewayUsed) {
+        if (!valRes.valid || valRes.leewayUsed) { // TODO: leeway logic is stupid
             try {
                 tokenToUse = await tryRefresh();
             } catch (e) {
@@ -214,15 +204,13 @@ function App() {
 
         setAccessToken(tokenToUse)
         setSessionValid(sessionValidTracker)
+        navigate("/home")
 
         return tokenToUse
     }, [])
 
-    interface TokenRefreshResponse {
-        access_token: string;
-    }
-
     const tryRefresh = async (): Promise<string | null> => {
+        console.log("Refreshing access token...")
         let res: Response;
         try {
             res = await fetch("/api/refresh-token", {
@@ -266,7 +254,7 @@ function App() {
 
     useEffect(() => {
         const run = async () => {
-            console.log("Running session validation...")
+            console.log("Validating session...")
             if (location.pathname === "/login") return
             try {
                 await validateSession()
@@ -367,16 +355,17 @@ function App() {
                     <PopupContext value={{ showPopup, closePopup }}>
                         <Routes>
                             <Route path="/login" element={<Login messages={messages} />} />
-                            <Route element={<BaseLayout messages={messages} displayPopup={displayPopup} popupChildren={popupChildren} showHeaderHomeIcon={false} />} >
-                                <Route path="/" element={<Dashboard />} />
+                            <Route element={<BaseLayout messages={messages} displayPopup={displayPopup} popupChildren={popupChildNode} showHeaderHomeIcon={false} />} >
+                                <Route path="/home" element={<Dashboard />} />
                             </Route>
-                            <Route element={<BaseLayout messages={messages} displayPopup={displayPopup} popupChildren={popupChildren} />} >
+                            <Route element={<BaseLayout messages={messages} displayPopup={displayPopup} popupChildren={popupChildNode} />} >
                                 <Route path="/inventory" element={<Inventory />} />
                                 <Route path="/profile" element={<Profile userID={thisUserID} />} />
                                 <Route path="/borrowing" element={<BorrowingPortal />} />
                                 <Route path="/resources" element={<Manuals />} />
                                 <Route path="/admin" element={<AdminPanel />} />
                             </Route>
+                            <Route path="*" element={<Navigate to={"/home"} replace />}/>
                         </Routes>
                     </PopupContext>
                 </MessageContext>

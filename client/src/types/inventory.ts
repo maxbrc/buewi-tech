@@ -11,7 +11,7 @@ interface Item {
     location_id: number;
 }
 
-interface ExtendedItem {
+interface EnrichedItem {
     item: Item;
     category: Category;
     subcategory: Subcategory;
@@ -21,9 +21,9 @@ interface ExtendedItem {
 }
 
 // Item, Edit Mode, Initial Creation
-type ItemSelection = [ExtendedItem, boolean, boolean]
+type ItemSelection = [EnrichedItem, boolean, boolean]
 
-interface BigCategory {
+interface FullCategory {
     main: Category;
     sub: {
         [key: string]: Subcategory;
@@ -31,7 +31,7 @@ interface BigCategory {
 }
 
 type CategoriesResponse = {
-    [key: string]: BigCategory;
+    [key: string]: FullCategory;
 }
 
 interface Category {
@@ -55,4 +55,4 @@ type ConditionsResponse = {
     [key: string]: Condition;
 }
 
-export { Item, CategoriesResponse, ConditionsResponse, ItemSelection, ExtendedItem, Subcategory }
+export { Item, CategoriesResponse, ConditionsResponse, ItemSelection, EnrichedItem, Subcategory }

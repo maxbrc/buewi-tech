@@ -3,7 +3,7 @@ import AutosizeInput from "react-input-autosize";
 import { diff } from "deep-object-diff";
 
 import { Icons } from "./Icons";
-import { ItemSelection, CategoriesResponse, ConditionsResponse, ExtendedItem } from "../types/inventory";
+import { ItemSelection, CategoriesResponse, ConditionsResponse, EnrichedItem, Item } from "../types/inventory";
 import { LocationsResponse } from "../types/locations";
 
 import CloseIcon from "../assets/close.svg";
@@ -21,7 +21,9 @@ import LocationBadge from "./LocationBadge";
 import CategorySelector from "./CategorySelector";
 import { validateSerialNumber } from "../utils/check_serial_number";
 import { AuthContext, MessageContext, RequestContext, PopupContext } from "./App";
-import { MessageType } from "./MessageList";
+import { MessageType } from "../types/message";
+
+type ItemPropertyNameMap = Record<keyof Item, string>;
 
 function DeleteConfirmationPopup({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void; }) {
     return (
@@ -33,7 +35,6 @@ function DeleteConfirmationPopup({ onConfirm, onClose }: { onConfirm: () => void
                 onClick={onClose}
             />
             <h2>Wirklich löschen?</h2>
-
             <section>
                 <button
                     className="delete-button"
@@ -53,7 +54,21 @@ function DeleteConfirmationPopup({ onConfirm, onClose }: { onConfirm: () => void
     )
 }
 
-function OverlayItem({ locations, categories, conditions, itemSelection, setItems, onClose }: { locations: LocationsResponse; categories: CategoriesResponse, conditions: ConditionsResponse, itemSelection: ItemSelection, setItems: React.Dispatch<React.SetStateAction<ExtendedItem[]>>; onClose: (refetchSn?: string) => void }) {
+function ExitWithoutSavingPopup({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void; }) {
+    return (
+        <>
+            <img
+                className="close-icon"
+                src={CloseIcon}
+                alt="Close Icon"
+                onClick={onClose}
+            />
+            <h2>Änderungen verwerfen?</h2>
+        </>
+    )
+}
+
+function OverlayItem({ locations, categories, conditions, itemSelection, setItems, onClose }: { locations: LocationsResponse; categories: CategoriesResponse, conditions: ConditionsResponse, itemSelection: ItemSelection, setItems: React.Dispatch<React.SetStateAction<EnrichedItem[]>>; onClose: (refetchSn?: string) => void }) {
     const initialExtendedItem = itemSelection[0]
     const conditionCommentRef = useRef<HTMLTextAreaElement>(null);
 

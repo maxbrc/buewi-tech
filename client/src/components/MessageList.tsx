@@ -1,17 +1,6 @@
 import "../styles/message_list.css";
 
-export enum MessageType {
-    INFO = "info",
-    SUCCESS = "success",
-    WARNING = "warning",
-    ERROR = "error"
-}
-
-export interface Message {
-    uuid: string;
-    type: MessageType,
-    content: string;
-}
+import { Message, MessageType } from "../types/message";
 
 function MessageList({ messages }: { messages: Message[]; }) {
     return (

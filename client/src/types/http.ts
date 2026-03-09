@@ -3,4 +3,8 @@ interface BackendResponse<T> {
     timestamp: string;
 }
 
-export { BackendResponse }
+interface RequestContextType {
+    makeRequest: <T>(url: string, options?: RequestInit, requireAuth?: boolean) => Promise<T>;
+}
+
+export { BackendResponse, RequestContextType }

@@ -2,10 +2,10 @@ import { useState, useEffect, useContext } from "react";
 import { v4 as uuid } from "uuid";
 
 import { Manual } from "../types/manuals";
-import { MessageType } from "./MessageList";
+import { MessageType } from "../types/message";
 import { AuthContext, MessageContext, PopupContext, RequestContext } from "./App";
 import "../styles/manual.css";
-import { ExtendedItem } from "../types/inventory";
+import { EnrichedItem } from "../types/inventory";
 
 import SearchIcon from "../assets/search.svg";
 import NoteAddIcon from "../assets/note_add.svg";
@@ -53,7 +53,7 @@ function ManualUploadPopup({ onNext, onClose }: { onNext: (file: File) => void; 
 
 function ManualRelationPopup({ onNext, onClose }: { onNext: (itemSerialNumber: string, itemName: string) => void; onClose: () => void; }) {
     const [ itemSerialNumber, setItemSerialNumber ] = useState("")
-    const [ receivedItem, setReceivedItem ] = useState<ExtendedItem | null>(null);
+    const [ receivedItem, setReceivedItem ] = useState<EnrichedItem | null>(null);
 
     const { makeRequest } = useContext(RequestContext);
     const { createMessage } = useContext(MessageContext);
@@ -71,9 +71,9 @@ function ManualRelationPopup({ onNext, onClose }: { onNext: (itemSerialNumber: s
             return
         }
 
-        let receivedItem: ExtendedItem;
+        let receivedItem: EnrichedItem;
         try {
-            receivedItem = await makeRequest<ExtendedItem>(`/api/items/${itemSerialNumber}`)
+            receivedItem = await makeRequest<EnrichedItem>(`/api/items/${itemSerialNumber}`)
         } catch (e) {
             createMessage(MessageType.ERROR, "Fehler beim Anfragen des Items: " + getErrorMessage(e))
             return

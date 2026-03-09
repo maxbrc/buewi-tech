@@ -8,9 +8,9 @@ import VisibilityIcon from "../assets/visibility.svg";
 import EditIcon from "../assets/edit.svg";
 import { Icons } from "./Icons";
 import "../styles/inventory.css";
-import { ExtendedItem, ItemSelection } from "../types/inventory";
+import { EnrichedItem, ItemSelection } from "../types/inventory";
 
-const InventoryItem = memo(function InventoryItem({ extendedItem, setSelectedItem, callbackFn }: { extendedItem: ExtendedItem, setSelectedItem: (itemSelection: ItemSelection | null) => void, callbackFn: () => void; }) {
+const InventoryItem = memo(function InventoryItem({ extendedItem, setSelectedItem, callbackFn }: { extendedItem: EnrichedItem, setSelectedItem: (itemSelection: ItemSelection | null) => void, callbackFn: () => void; }) {
     const borrowingEvent = extendedItem.borrowing_event
 
     return (
